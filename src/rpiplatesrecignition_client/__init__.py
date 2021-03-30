@@ -1,4 +1,6 @@
 import socketio
+from rpiplatesrecignition_client.libs.camera import camera
+
 
 def run(server, unique_id=''):
     sio = socketio.Client()
@@ -11,6 +13,11 @@ def run(server, unique_id=''):
     def open_gate():
         # open gate
         pass
+
+    @sio.on('take_photo')
+    def take_photo():
+        [token, img] = camera.take_photo()
+        
 
     sio.connect(server)
     sio.wait()
