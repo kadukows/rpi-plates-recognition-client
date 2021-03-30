@@ -1,5 +1,7 @@
 import pytest
 import socketio
+import gpiozero
+from rpiplatesrecignition_client.libs.gate import GateController
 
 class MockWebSocketConnection:
     """Class simulating one-to-one websocket connection"""
@@ -9,16 +11,18 @@ class MockWebSocketConnection:
         self.servers_events_to_funcs = {}
 
     def _from_server(self, name, data=None):
-        if data:
-            self.clients_events_to_funcs[name](data)
-        else:
-            self.clients_events_to_funcs[name]()
+        if name in self.clients_events_to_funcs:
+            if data:
+                self.clients_events_to_funcs[name](data)
+            else:
+                self.clients_events_to_funcs[name]()
 
     def _from_client(self, name, data=None):
-        if data:
-            self.servers_events_to_funcs[name](data)
-        else:
-            self.servers_events_to_funcs[name]()
+        if name in self.servers_events_to_funcs:
+            if data:
+                self.servers_events_to_funcs[name](data)
+            else:
+                self.servers_events_to_funcs[name]()
 
     def _connect(self):
         for d in (self.servers_events_to_funcs, self.clients_events_to_funcs):
@@ -46,14 +50,12 @@ class MockClient:
     def __init__(self, parent: MockWebSocketConnection):
         self.parent = parent
 
-
     # decorators
     def event(self, target):
         self.parent.clients_events_to_funcs[target.__name__] = target
 
     def on(self, name):
         return _OnDecorator(self.parent.clients_events_to_funcs, name)
-
 
     # mocked methods
     def connect(self, server):
@@ -68,8 +70,10 @@ class MockClient:
     def _close_connection(self):
         self.parent._disconnect()
 
+
 class MockServer:
     """Class mimicking socketio server"""
+
     def __init__(self, parent: MockWebSocketConnection):
         self.parent = parent
 
@@ -80,7 +84,7 @@ class MockServer:
         return _OnDecorator(self.parent.servers_events_to_funcs, name)
 
     def emit(self, name, data=None):
-        self.parent.emit
+        self.parent._from_server(name, data)
 
 
 @pytest.fixture
@@ -94,3 +98,7 @@ def client_server(monkeypatch):
     yield (client, server)
 
     client._close_connection()
+
+@pytest.fixture
+def gate_controller(monkeypatch):
+    return GateController(gpio_pin=4, button_press_time_s=0.350, gate_opening_time_s=1)
