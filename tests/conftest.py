@@ -1,6 +1,5 @@
 import pytest
 import socketio
-import gpiozero
 
 
 class MockWebSocketConnection:
@@ -98,3 +97,25 @@ def client_server(monkeypatch):
     yield (client, server)
 
     client._close_connection()
+
+@pytest.fixture
+def client_server_with_gathered_logs(client_server):
+    client, server = client_server
+
+    class LogGatherer:
+        def __init__(self):
+            self.logs = []
+
+        def __call__(self, log):
+            self.logs.append(log)
+
+        def messages(self):
+            return (log.msg for log in self.logs)
+
+        def messages_from(self, name):
+            return (log.msg for log in self.logs if log.name == name)
+
+    log_gatherer = LogGatherer()
+    server.on('log')(log_gatherer)
+
+    return (client, server, log_gatherer)
