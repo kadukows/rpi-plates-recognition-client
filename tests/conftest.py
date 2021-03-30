@@ -2,6 +2,7 @@ import pytest
 import socketio
 import gpiozero
 
+
 class MockWebSocketConnection:
     """Class simulating one-to-one websocket connection"""
 
@@ -49,14 +50,12 @@ class MockClient:
     def __init__(self, parent: MockWebSocketConnection):
         self.parent = parent
 
-
     # decorators
     def event(self, target):
         self.parent.clients_events_to_funcs[target.__name__] = target
 
     def on(self, name):
         return _OnDecorator(self.parent.clients_events_to_funcs, name)
-
 
     # mocked methods
     def connect(self, server):
@@ -71,8 +70,10 @@ class MockClient:
     def _close_connection(self):
         self.parent._disconnect()
 
+
 class MockServer:
     """Class mimicking socketio server"""
+
     def __init__(self, parent: MockWebSocketConnection):
         self.parent = parent
 
@@ -84,16 +85,6 @@ class MockServer:
 
     def emit(self, name, data=None):
         self.parent._from_server(name, data)
-
-class MockOutputDevice:
-    def __init__(self, *args):
-        pass
-
-    def on(self):
-        pass
-
-    def off(self):
-        pass
 
 
 @pytest.fixture
@@ -107,4 +98,3 @@ def client_server(monkeypatch):
     yield (client, server)
 
     client._close_connection()
-
