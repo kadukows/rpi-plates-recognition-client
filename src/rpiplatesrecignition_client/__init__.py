@@ -18,15 +18,14 @@ def run(server, unique_id=''):
     def open_gate():
         gate.open()
         #todo, return statues eg. if gate is open or not
+        
+        logger.debug('received open gate message')
 
     @sio.on('close_gate')
     def close_gate():
         gate.close()
         #todo, return statues eg. if gate is open or not
 
-        
-        # open gate
-        logger.debug('received open gate message')
         pass
 
     @sio.on('run_example_module')
