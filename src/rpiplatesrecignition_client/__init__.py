@@ -7,10 +7,6 @@ def run(server, unique_id=''):
     logger_config.logger_config(sio)
     logger = logging.getLogger('rpiplatesrecognition_client.init')
 
-    @sio.event
-    def connect():
-        sio.emit('login', data={'unique-id': unique_id})
-
     @sio.on('open_gate')
     def open_gate():
         # open gate
@@ -21,5 +17,5 @@ def run(server, unique_id=''):
     def run_example_module():
         example_module.run()
 
-    sio.connect(server)
+    sio.connect(server, headers={'unique_id': unique_id})
     sio.wait()
