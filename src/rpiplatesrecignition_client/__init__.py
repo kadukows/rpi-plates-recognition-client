@@ -17,5 +17,10 @@ def run(server, unique_id=''):
     def run_example_module():
         example_module.run()
 
-    sio.connect(server, headers={'unique_id': unique_id})
+    @sio.event
+    def connect():
+        print('login call')
+        sio.emit('login', data={'unique_id': unique_id})
+
+    sio.connect(server)
     sio.wait()
