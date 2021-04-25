@@ -1,6 +1,13 @@
-import logging, socketio
+import logging
+import socketio
 from .libs import logger_config
 from .libs import example_module
+from .libs.camera import camera
+import base64
+import os
+import pickle
+import cv2 as cv2
+
 
 def run(server, unique_id=''):
     assert server.startswith('http:')
@@ -27,6 +34,18 @@ def run(server, unique_id=''):
                 example_module.run()
             elif command_ == 'open_gate':
                 logger.debug('open_gate was issued')
+            elif command_ == 'trigger_photo':
+                logger.debug("Take photo issued in top layers")
+                [token, img] = camera.take_photo()
+
+                image_string = base64.b64encode(
+                    cv2.imencode('.jpg', img)[1]).decode()
+                
+                res = sio.call(
+                    'image_from_rpi',
+                    data={'img': image_string, 'access_token': token},
+                    namespace='/rpi')
+
             else:
                 logger.warning(f'Unknown command: {command_}')
 
