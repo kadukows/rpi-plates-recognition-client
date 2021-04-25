@@ -15,7 +15,7 @@ def logger_config(sio, with_file=False):
             self.sio = sio
 
         def handle(self, record):
-            self.sio.emit('log', record)
+            self.sio.emit('log_from_rpi', formatter.format(record), namespace='/rpi')
 
     sh = SocketioHandler(sio)
     sh.setLevel(logging.DEBUG)

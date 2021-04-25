@@ -25,10 +25,10 @@ class MockWebSocketConnection:
             else:
                 self.servers_events_to_funcs[name]()
 
-    def _connect(self):
+    def _connect(self, headers=None):
         for d in (self.servers_events_to_funcs, self.clients_events_to_funcs):
             if 'connect' in d:
-                d['connect']()
+                d['connect'](headers=headers)
 
     def _disconnect(self):
         for d in (self.servers_events_to_funcs, self.clients_events_to_funcs):
@@ -59,8 +59,8 @@ class MockClient:
         return _OnDecorator(self.parent.clients_events_to_funcs, name)
 
     # mocked methods
-    def connect(self, server):
-        self.parent._connect()
+    def connect(self, server, headers=None):
+        self.parent._connect(headers=headers)
 
     def wait(self):
         pass
