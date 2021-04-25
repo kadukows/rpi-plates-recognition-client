@@ -1,4 +1,5 @@
 import rpiplatesrecignition_client
+import datetime
 
 
 def test_rpiplatesrecognition_client_will_call_login_upon_connecting(client_server):

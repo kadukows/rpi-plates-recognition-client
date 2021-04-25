@@ -1,5 +1,7 @@
 import pytest
 import socketio
+import gpiozero
+from rpiplatesrecignition_client.libs.gate import GateController
 
 
 class MockWebSocketConnection:
@@ -119,3 +121,7 @@ def client_server_with_gathered_logs(client_server):
     server.on('log')(log_gatherer)
 
     return (client, server, log_gatherer)
+
+@pytest.fixture
+def gate_controller(monkeypatch):
+    return GateController(gpio_pin=4, button_press_time_s=0.350, gate_opening_time_s=1)
