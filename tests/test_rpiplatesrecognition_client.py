@@ -8,10 +8,18 @@ def test_rpiplatesrecognition_client_will_call_login_upon_connecting(client_serv
     class Recorder:
         called = False
 
-    @server.on('login')
-    def login(data):
+    @server.event
+    def connect(headers):
         Recorder.called = True
-        assert 'unique-id' in data and data['unique-id'] == unique_id
+        assert 'unique_id' in headers and headers['unique_id'] == unique_id
 
     rpiplatesrecignition_client.run('', unique_id)
     assert Recorder.called
+
+def test_rpiplatesrecognition_client_will_log_open_gate_message(client_server_with_gathered_logs):
+    client, server, logs = client_server_with_gathered_logs
+
+    rpiplatesrecignition_client.run('', '')
+    server.emit('open_gate')
+
+    assert 'received open gate message' in logs.messages_from('rpiplatesrecognition_client.init')
