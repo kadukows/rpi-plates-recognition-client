@@ -3,6 +3,7 @@ import socketio
 from .libs import logger_config
 from .libs import example_module
 from .libs.camera import camera
+from .libs.gate import gate
 import base64
 import os
 import pickle
@@ -33,7 +34,12 @@ def run(server, unique_id=''):
             if command_ == 'run_example_module':
                 example_module.run()
             elif command_ == 'open_gate':
-                logger.debug('open_gate was issued')
+                logger.debug('open_gate was issued in top layers')
+                gate.open()
+            elif command_ == 'close_gate':
+                logger.debug('close_gate was issued in top layers')
+                gate.close()
+            
             elif command_ == 'trigger_photo':
                 logger.debug("Take photo issued in top layers")
                 [token, img] = camera.take_photo()
@@ -45,6 +51,7 @@ def run(server, unique_id=''):
                     'image_from_rpi',
                     data={'img': image_string, 'access_token': token},
                     namespace='/rpi')
+            
 
             else:
                 logger.warning(f'Unknown command: {command_}')

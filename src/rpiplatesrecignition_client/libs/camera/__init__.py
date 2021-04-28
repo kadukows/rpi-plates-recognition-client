@@ -1,5 +1,6 @@
 from .rpi_camera import RaspberryPiCamera
-
+import io
+import os
 
 def is_raspberrypi():
     try:

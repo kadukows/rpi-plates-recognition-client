@@ -1,29 +1,25 @@
-from gpiozero import OutputDevice
 import datetime
 from time import sleep
 import logging
 
 
-class GateController:
+class MockGateController:
     def __init__(self, gpio_pin, button_press_time_s, gate_opening_time_s):
-        self.gpio_pin = gpio_pin
+       
         self.button_press_time = button_press_time_s
         self.gate_opening_time = gate_opening_time_s
         self.init_state_change_time = datetime.datetime.now(
         ) - datetime.timedelta(seconds=self.gate_opening_time)
-        self.gpio_pin = OutputDevice(gpio_pin)
-        self.gpio_pin.off()
         self.opened = False
         self.is_closing = False
         self.is_opening = False
-        self.logger = logging.getLogger('rpiplatesrecognition_client.GateController')
+        self.logger = logging.getLogger('rpiplatesrecognition_client.MockGateController')
+        self.logger.warning("GateController running with unknown PinFactory -assuming it is not RPI - this is just a Mock class")
         
 
     def __press_button(self):
-        self.logger.debug("Pressing button for: " + str(self.button_press_time) + "seconds")
-        self.gpio_pin.on()
+        self.logger.debug("Mock Pressing button for: " + str(self.button_press_time) + "seconds")
         sleep(self.button_press_time)
-        self.gpio_pin.off()
 
     # check for busy state and update open/close state of the gate
     def is_busy(self) -> bool:
