@@ -64,9 +64,11 @@ def run(server, unique_id=''):
 
         _, img = camera.take_photo()
 
+        logger.debug('Encoding image')
         image_string = base64.b64encode(
             cv2.imencode('.jpg', img)[1])
 
+        logger.debug("Sending image to the server")
         res = sio.call(
             'image_from_rpi',
             data=image_string,
