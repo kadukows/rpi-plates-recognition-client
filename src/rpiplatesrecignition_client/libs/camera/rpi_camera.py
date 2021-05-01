@@ -45,15 +45,15 @@ class RaspberryPiCamera():
                 str(int(hashlib.sha256(token.encode('utf-8')).hexdigest(), 16) % 10**8) + \
                 ".jpg"
 
-            cmd = "raspistill -o" + full_filename + \
-                  " -w" + self.Config.img_size[0] + \
-                  " -h" + self.Config.img_size[1] + \
-                  " -t" + self.Config.timeout_in_ms + \
-                  " -sh" + self.Config.sharpness + \
-                  " -co" + self.Config.contrast + \
-                  " -br" + self.Config.brightness + \
-                  " -sa" + self.Config.saturation + \
-                  " -q" + self.Config.quality 
+            cmd = "raspistill -o " + "filename" + \
+                  " -w " + str(self.Config.img_size[0]) + \
+                  " -h " + str(self.Config.img_size[1]) + \
+                  " -t " + str(self.Config.timeout_in_ms) + \
+                  " -sh " +str(self.Config.sharpness) + \
+                  " -co " +str(self.Config.contrast) + \
+                  " -br " +str(self.Config.brightness) + \
+                  " -sa " +str(self.Config.saturation) + \
+                  " -q " + str(self.Config.quality)
             print(cmd)
 
 
