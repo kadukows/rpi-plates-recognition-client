@@ -45,7 +45,7 @@ class RaspberryPiCamera():
                 str(int(hashlib.sha256(token.encode('utf-8')).hexdigest(), 16) % 10**8) + \
                 ".jpg"
 
-            cmd = "raspistill -o " + "filename" + \
+            cmd = "raspistill -n -o " + full_filename + \
                   " -w " + str(self.Config.img_size[0]) + \
                   " -h " + str(self.Config.img_size[1]) + \
                   " -t " + str(self.Config.timeout_in_ms) + \
@@ -54,11 +54,9 @@ class RaspberryPiCamera():
                   " -br " +str(self.Config.brightness) + \
                   " -sa " +str(self.Config.saturation) + \
                   " -q " + str(self.Config.quality)
-            print(cmd)
-
-
-                  
-            self.logger.debug('Calling raspistill in subprocess')
+            
+            
+            self.logger.debug('Calling raspistill as: ' + cmd)
             subprocess.call(cmd, shell=True)
 
             self.logger.debug('Reading image with CV2')
