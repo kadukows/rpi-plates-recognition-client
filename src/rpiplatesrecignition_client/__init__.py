@@ -8,6 +8,10 @@ import base64
 import os
 import pickle
 import cv2 as cv2
+import json
+
+
+
 
 
 def run(server, unique_id=''):
@@ -34,27 +38,39 @@ def run(server, unique_id=''):
             if command_ == 'run_example_module':
                 example_module.run()
             elif command_ == 'open_gate':
-                logger.debug('open_gate was issued in top layers')
+                logger.debug('open_gate was issued in command handler')
                 gate.open()
             elif command_ == 'close_gate':
-                logger.debug('close_gate was issued in top layers')
+                logger.debug('close_gate was issued in command handler')
                 gate.close()
 
             elif command_ == 'trigger_photo':
-                logger.debug("Take photo issued in top layers")
-                token, img = camera.take_photo()
-
-                image_string = base64.b64encode(
-                    cv2.imencode('.jpg', img)[1])
-
-                res = sio.call(
-                    'image_from_rpi',
-                    data=image_string,
-                    namespace='/rpi')
-
+                
+                logger.debug("Take photo issued in command handler")
+                on_trigger_photo()
 
             else:
                 logger.warning(f'Unknown command: {command_}')
+                
+    def on_trigger_photo():
+        config_string = sio.call(
+            'update_config',
+            data={'unique_id': unique_id},
+            namespace='/rpi')
+
+        json_config = json.loads(config_string)
+
+        camera.update_config(json_config)
+
+        _, img = camera.take_photo()
+
+        image_string = base64.b64encode(
+            cv2.imencode('.jpg', img)[1])
+
+        res = sio.call(
+            'image_from_rpi',
+            data=image_string,
+            namespace='/rpi')
 
     sio.connect(server)
     sio.wait()
