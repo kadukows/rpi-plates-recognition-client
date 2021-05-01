@@ -62,21 +62,7 @@ class RaspberryPiCamera():
             self.logger.debug('Reading image with CV2')
             img = cv2.imread(full_filename)
         else:
-            self.logger.warning('Camera module ran on NON-RPI device')
-            
-            
-            cmd = "raspistill -o " + "filename" + \
-                  " -w " + str(self.Config.img_size[0]) + \
-                  " -h " + str(self.Config.img_size[1]) + \
-                  " -t " + str(self.Config.timeout_in_ms) + \
-                  " -sh " +str(self.Config.sharpness) + \
-                  " -co " +str(self.Config.contrast) + \
-                  " -br " +str(self.Config.brightness) + \
-                  " -sa " +str(self.Config.saturation) + \
-                  " -q " + str(self.Config.quality)
-            
-            print(cmd)
-            
+            self.logger.warning('Camera module ran on NON-RPI device, sending sample image')       
             img = cv2.imread('plate.jpg')
             token = 'debug_image'
 
