@@ -39,19 +39,19 @@ def run(server, unique_id=''):
             elif command_ == 'close_gate':
                 logger.debug('close_gate was issued in top layers')
                 gate.close()
-            
+
             elif command_ == 'trigger_photo':
                 logger.debug("Take photo issued in top layers")
-                [token, img] = camera.take_photo()
+                token, img = camera.take_photo()
 
                 image_string = base64.b64encode(
-                    cv2.imencode('.jpg', img)[1]).decode()
-                
+                    cv2.imencode('.jpg', img)[1])
+
                 res = sio.call(
                     'image_from_rpi',
-                    data={'img': image_string, 'access_token': token},
+                    data=image_string,
                     namespace='/rpi')
-            
+
 
             else:
                 logger.warning(f'Unknown command: {command_}')
