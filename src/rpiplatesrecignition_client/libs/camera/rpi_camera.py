@@ -26,7 +26,6 @@ class RaspberryPiCamera():
         
 
     def update_config(self, config: json):
-        print(config)
         self.Config.img_size = config['img_size']
         self.Config.timeout_in_ms = config['camera_timeout_in_ms']
         self.Config.sharpness = config['camera_sharpness']

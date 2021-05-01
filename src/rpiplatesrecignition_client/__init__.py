@@ -39,10 +39,10 @@ def run(server, unique_id=''):
                 example_module.run()
             elif command_ == 'open_gate':
                 logger.debug('open_gate was issued in command handler')
-                gate.open()
+                on_gate_request(gate.open)
             elif command_ == 'close_gate':
                 logger.debug('close_gate was issued in command handler')
-                gate.close()
+                on_gate_request(gate.close)
 
             elif command_ == 'trigger_photo':
                 
@@ -52,6 +52,17 @@ def run(server, unique_id=''):
             else:
                 logger.warning(f'Unknown command: {command_}')
                 
+    def on_gate_request(command):
+        config_string = sio.call(
+            'update_config',
+            data={'unique_id': unique_id},
+            namespace='/rpi')
+
+        json_config = json.loads(config_string)
+        gate.update_config(json_config)
+        command()
+
+                 
     def on_trigger_photo():
         config_string = sio.call(
             'update_config',
@@ -61,6 +72,7 @@ def run(server, unique_id=''):
         json_config = json.loads(config_string)
 
         camera.update_config(json_config)
+        gate.update_config(json_config)
 
         _, img = camera.take_photo()
 
