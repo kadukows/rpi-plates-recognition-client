@@ -92,7 +92,7 @@ class RPIGateController(GateController):
         
 
     def press_button(self):
-        self.logger.debug("Pressing button for: " + str(self.button_press_time) + "seconds")
+        self.logger.debug("Pressing button for: " + str(self.Config.button_press_time) + "seconds")
         self.gpio_pin.on()
         sleep(self.Config.button_press_time)
         self.gpio_pin.off()
