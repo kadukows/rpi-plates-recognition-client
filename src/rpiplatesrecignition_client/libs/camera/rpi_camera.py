@@ -18,12 +18,12 @@ class RaspberryPiCamera():
         brightness: int = 0 #-100 - 100
         saturation: int = 0 #-100 - 100
         quality: int = 100 #0 - 100
-        
+
     def __init__(self, is_raspberrypi):
         self.is_raspberrypi = is_raspberrypi
         self.logger = logging.getLogger(
             'rpiplatesrecognition_client.RaspberryPiCamera')
-        
+
 
     def update_config(self, config: json):
         self.Config.img_size = config['img_size']
@@ -53,16 +53,16 @@ class RaspberryPiCamera():
                   " -br " +str(self.Config.brightness) + \
                   " -sa " +str(self.Config.saturation) + \
                   " -q " + str(self.Config.quality)
-            
-            
+
+
             self.logger.debug('Calling raspistill as: ' + cmd)
             subprocess.call(cmd, shell=True)
 
             self.logger.debug('Reading image with CV2')
             img = cv2.imread(full_filename)
         else:
-            self.logger.warning('Camera module ran on NON-RPI device, sending sample image')       
-            img = cv2.imread('plate.jpg')
+            self.logger.warning('Camera module ran on NON-RPI device, sending sample image')
+            img = cv2.imread('debug.jpg')
             token = 'debug_image'
 
         return token, img

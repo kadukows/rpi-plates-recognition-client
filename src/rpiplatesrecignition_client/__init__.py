@@ -45,13 +45,13 @@ def run(server, unique_id=''):
                 on_gate_request(gate.close)
 
             elif command_ == 'trigger_photo':
-                
+
                 logger.debug("Take photo issued in command handler")
                 on_trigger_photo()
 
             else:
                 logger.warning(f'Unknown command: {command_}')
-                
+
     def on_gate_request(command):
         config_string = sio.call(
             'update_config',
@@ -62,7 +62,7 @@ def run(server, unique_id=''):
         gate.update_config(json_config)
         command()
 
-                 
+
     def on_trigger_photo():
         config_string = sio.call(
             'update_config',
@@ -81,7 +81,7 @@ def run(server, unique_id=''):
             cv2.imencode('.jpg', img)[1])
 
         logger.debug("Sending image to the server")
-        res = sio.call(
+        sio.emit(
             'image_from_rpi',
             data=image_string,
             namespace='/rpi')
