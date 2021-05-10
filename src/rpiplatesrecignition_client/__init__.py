@@ -74,7 +74,8 @@ def run(server, unique_id=''):
         camera.update_config(json_config)
         gate.update_config(json_config)
 
-        _, img = camera.take_photo()
+        img = camera.take_photo()
+
 
         logger.debug('Encoding image')
         image_string = base64.b64encode(
@@ -85,6 +86,8 @@ def run(server, unique_id=''):
             'image_from_rpi',
             data=image_string,
             namespace='/rpi')
+        logger.debug("Image sent")
+        
 
     sio.connect(server)
     sio.wait()
