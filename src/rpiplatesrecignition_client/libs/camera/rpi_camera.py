@@ -49,6 +49,7 @@ class RaspberryPiCamera():
                   " -br " +str(self.Config.brightness) + \
                   " -sa " +str(self.Config.saturation) + \
                   " -q " + str(self.Config.quality)
+
             self.logger.debug('Raspistill command : ' + cmd)
 
             img_stream = BytesIO()
@@ -57,10 +58,12 @@ class RaspberryPiCamera():
             img_stream.seek(0)
             img_array = np.asarray(bytearray(img_stream.read()), dtype=np.uint8)
 
+
             self.logger.debug('Decoding image with CV2')
             img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
         else:
             self.logger.warning('Camera module ran on NON-RPI device, sending sample image')
             img = cv2.imread('debug.jpg')
+
 
         return img
