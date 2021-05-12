@@ -29,6 +29,11 @@ def run(server, unique_id=''):
             namespace='/rpi')
 
         print('response to login call: ', res)
+        sio.emit(
+                'gate_controller_status',
+                data={'status': "opened" if gate.is_open() else "closed"},
+                namespace='/rpi')
+
 
     @sio.on('message_from_server_to_rpi', namespace='/rpi')
     def command(data):
@@ -43,9 +48,10 @@ def run(server, unique_id=''):
             elif command_ == 'close_gate':
                 logger.debug('close_gate was issued in command handler')
                 on_gate_request(gate.close)
-
+            elif command_ == 'open_and_close_gate':
+                logger.debug('open_and_close_gate was issued in command handler')
+                on_gate_request(gate.open_and_close)
             elif command_ == 'trigger_photo':
-
                 logger.debug("Take photo issued in command handler")
                 on_trigger_photo()
 
@@ -60,7 +66,7 @@ def run(server, unique_id=''):
 
         json_config = json.loads(config_string)
         gate.update_config(json_config)
-        command()
+        command(sio)
 
 
     def on_trigger_photo():

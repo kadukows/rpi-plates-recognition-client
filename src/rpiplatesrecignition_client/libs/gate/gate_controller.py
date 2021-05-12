@@ -44,43 +44,65 @@ class GateController:
         self.close()
 
     def is_open(self):
-        return self.is_opened()
+        return self.is_opened and not self.is_busy()
 
     def is_busy(self):
         return self.lock.locked()
 
     # it is safe to call each of the following without checking for is_busy or is_opened/closed response
     # the gate is not supposed to stop or moving opposite direction
-    def open_and_close(self):
+    def open_and_close(self, sio):
         self.logger.debug("[OPEN and CLOSE] beggining procedure")
         self.open()
         thread = Thread(target = self.__wait_and_close)
         thread.start()
 
-    def open(self):
+    def open(self, sio):
         self.logger.debug("[OPEN] In open function - checking if gate not open")
         if not self.is_opened:
             self.lock.acquire()
+
+            sio.emit(
+                'gate_controller_status',
+                data={'status': "opening"},
+                namespace='/rpi')
             self.logger.debug("[OPEN] Gate not open - lock acquired, pressing button for " + 
                         str(self.Config.button_press_time) + "s" + 
                         "and waiting for gate to be opened for: " + str(self.Config.gate_opening_time))
             self.press_button()
             sleep(self.Config.gate_opening_time)
+            
             self.is_opened = True
             self.logger.debug("[OPEN] Gate opened, releasing lock")
+            sio.emit(
+                'gate_controller_status',
+                data={'status': "opened"},
+                namespace='/rpi')
             self.lock.release()
 
-    def close(self):
+    def close(self, sio):
        self.logger.debug("[CLOSE] In close function - checking if gate open")
        if self.is_opened:
+           
+            self.lock.acquire()
+            sio.emit(
+                'gate_controller_status',
+                data={'status': "closing"},
+                namespace='/rpi')
+           
             self.logger.debug("[CLOSE] Gate open - lock acquired, pressing button for " + 
                         str(self.Config.button_press_time) + "s" + 
                         "and waiting for gate to be closed for: " + str(self.Config.gate_opening_time))
-            self.lock.acquire()
+           
             self.press_button()
             sleep(self.Config.gate_opening_time)
+
             self.is_opened = False
             self.logger.debug("[CLOSE] Gate closed, releasing lock")
+            sio.emit(
+                'gate_controller_status',
+                data={'status': "closed"},
+                namespace='/rpi')
             self.lock.release()
 
            
