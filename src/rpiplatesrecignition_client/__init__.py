@@ -71,7 +71,7 @@ def run(server, unique_id=''):
     sio = socketio.Client()
     logger_config.logger_config(sio)
     logger = logging.getLogger('rpiplatesrecognition_client.init')
-    proxy = CommandProxy(sio, logger, unique_id)
+    proxy = None 
 
     @sio.event(namespace='/rpi')
     def connect():
@@ -81,6 +81,7 @@ def run(server, unique_id=''):
             namespace='/rpi')
 
         print('response to login call: ', res)
+        proxy = CommandProxy(sio, logger, unique_id)
         sio.emit(
                 'gate_controller_status',
                 data={'status': "opened" if gate.is_open() else "closed"},

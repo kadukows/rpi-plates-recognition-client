@@ -49,7 +49,7 @@ class RPIMotionSensor(MotionSensor):
 
 class MockMotionSensor(MotionSensor):
     def __init__(self):
-        self.logger = logging.getLogger('rpiplatesrecognition_client.RPIMotionSensor')
+        self.logger = logging.getLogger('rpiplatesrecognition_client.MockMotionSensor')
         self.logger.debug("[MOCK_MOTION] Just a mock class")
         super().__init__()
 
