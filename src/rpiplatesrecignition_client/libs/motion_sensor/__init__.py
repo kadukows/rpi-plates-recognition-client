@@ -1,8 +1,8 @@
 from gpiozero import *
 
 try:
-    from .gate_controller import RPIGateController
-    #gate = RPIGateController()
+    from .motion_sensor import RPIMotionSensor
+    sensor = RPIMotionSensor()
 except BadPinFactory as e:
-    from .gate_controller import MockGateController
-    #gate = MockGateController()
+    from .motion_sensor import MockMotionSensor
+    sensor = MockMotionSensor()
