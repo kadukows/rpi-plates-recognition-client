@@ -30,6 +30,7 @@ class MotionSensor:
                 self.logger.warning("Unable to change input gpio pin (pin probably in use) or!")
 
     def notify_on_high_state(self, function):
+        self.logger.debug("Starting thread to wait for high state")
         thread = Thread(target = self.wait_for_high_state, args=[function])
         thread.start()
         
@@ -42,6 +43,7 @@ class RPIMotionSensor(MotionSensor):
 
     def wait_for_high_state(self, function):
         self.input_device.wait_for_active()
+        self.logger.debug("Motion detected, invoking trigger photo")
         function()
 
 
