@@ -9,6 +9,7 @@ import os
 import pickle
 import cv2 as cv2
 import json
+import time
 
 
 
@@ -20,6 +21,7 @@ def run(server, unique_id=''):
     sio = socketio.Client()
     logger_config.logger_config(sio)
     logger = logging.getLogger('rpiplatesrecognition_client.init')
+
 
     @sio.event(namespace='/rpi')
     def connect():
@@ -34,7 +36,7 @@ def run(server, unique_id=''):
                 data={'status': "opened" if gate.is_open() else "closed"},
                 namespace='/rpi')
 
-
+    
     @sio.on('message_from_server_to_rpi', namespace='/rpi')
     def command(data):
         if isinstance(data, str):
@@ -79,7 +81,7 @@ def run(server, unique_id=''):
 
         camera.update_config(json_config)
         gate.update_config(json_config)
-
+        
         img = camera.take_photo()
 
 
@@ -96,4 +98,6 @@ def run(server, unique_id=''):
         
 
     sio.connect(server)
-    sio.wait()
+    time.sleep(0.5)
+    frame = camera.start_streaming(sio)
+
